@@ -24,6 +24,17 @@ public class IterateUtils {
 		};
 	}
 
+	public static <T> Iterator<T> makeIterator(Supplier<T> next) {
+		Object[] value = new Object[1];
+		BooleanSupplier hasNext = () -> {
+			value[0] = next.get();
+			return value[0] != null;
+		};
+		@SuppressWarnings("unchecked")
+		Supplier<T> next1 = () -> (T) value[0];
+		return makeIterator(hasNext, next1);
+	}
+
 	public static <T> Iterator<T> asIterator(Enumeration<T> e) {
 		return makeIterator(e::hasMoreElements, e::nextElement);
 	}
