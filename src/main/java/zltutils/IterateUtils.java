@@ -35,6 +35,22 @@ public class IterateUtils {
 		return makeIterator(hasNext, next1);
 	}
 
+	public static <T> Iterable<T> makeIterable(BooleanSupplier hasNext, Supplier<T> next) {
+		return asIterable(makeIterator(hasNext, next));
+	}
+
+	public static <T> Iterable<T> makeIterable(Supplier<T> next) {
+		return asIterable(makeIterator(next));
+	}
+
+	public static <T> Stream<T> makeStream(BooleanSupplier hasNext, Supplier<T> next) {
+		return asStream(makeIterator(hasNext, next));
+	}
+
+	public static <T> Stream<T> makeStream(Supplier<T> next) {
+		return asStream(makeIterator(next));
+	}
+
 	public static <T> Iterator<T> asIterator(Enumeration<T> e) {
 		return makeIterator(e::hasMoreElements, e::nextElement);
 	}
