@@ -2,6 +2,7 @@ package zltutils;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class Xyz {
 	public static final byte[] BOM_UTF8 = makeBytes(0xEF, 0xBB, 0xBF);
@@ -21,6 +22,34 @@ public class Xyz {
 	}
 
 	public static void doNothing() {
+	}
+
+	@SafeVarargs
+	public static <T> Predicate<T> conjunction(Predicate<? super T>... predicates) {
+		return t -> {
+			for (Predicate<? super T> p : predicates) {
+				if (!p.test(t)) {
+					return false;
+				}
+			}
+			return true;
+		};
+	}
+
+	@SafeVarargs
+	public static <T> Predicate<T> disjunction(Predicate<? super T>... predicates) {
+		return t -> {
+			for (Predicate<? super T> p : predicates) {
+				if (p.test(t)) {
+					return true;
+				}
+			}
+			return false;
+		};
+	}
+
+	public static <T> Predicate<T> negation(Predicate<? super T> predicate) {
+		return t -> !predicate.test(t);
 	}
 
 	public static byte[] makeBytes(int... ints) {
