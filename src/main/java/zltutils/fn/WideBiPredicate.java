@@ -12,6 +12,10 @@ public interface WideBiPredicate<T, U> {
 		return (t, u) -> p.test(outThrown, t, u);
 	}
 
+	static <T, U> BiPredicate<T, U> tryNarrow(WideBiPredicate<T, U> p) {
+		return p::tryTest;
+	}
+
 	boolean test(T t, U u) throws Throwable;
 
 	default boolean test(Throwable[] outThrown, T t, U u) {
@@ -22,6 +26,14 @@ public interface WideBiPredicate<T, U> {
 				outThrown[0] = thrown;
 			}
 			return false;
+		}
+	}
+
+	default boolean tryTest(T t, U u) {
+		try {
+			return test(t, u);
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }

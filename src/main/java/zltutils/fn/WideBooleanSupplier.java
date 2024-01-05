@@ -8,6 +8,10 @@ public interface WideBooleanSupplier {
 		return () -> sup.getAsBoolean(outThrown);
 	}
 
+	static BooleanSupplier narrow(WideBooleanSupplier sup) {
+		return sup::tryGetAsBoolean;
+	}
+
 	static boolean always() {
 		return true;
 	}
@@ -26,6 +30,14 @@ public interface WideBooleanSupplier {
 				outThrown[0] = thrown;
 			}
 			return false;
+		}
+	}
+
+	default boolean tryGetAsBoolean() {
+		try {
+			return getAsBoolean();
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }

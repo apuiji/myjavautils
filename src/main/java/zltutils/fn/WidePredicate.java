@@ -12,6 +12,10 @@ public interface WidePredicate<T> {
 		return t -> p.test(outThrown, t);
 	}
 
+	static <T> Predicate<T> narrow(WidePredicate<T> p) {
+		return p::tryTest;
+	}
+
 	boolean test(T t) throws Throwable;
 
 	default boolean test(Throwable[] outThrown, T t) {
@@ -22,6 +26,14 @@ public interface WidePredicate<T> {
 				outThrown[0] = thrown;
 			}
 			return false;
+		}
+	}
+
+	default boolean tryTest(T t) {
+		try {
+			return test(t);
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }

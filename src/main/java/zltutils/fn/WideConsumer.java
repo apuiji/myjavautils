@@ -12,6 +12,10 @@ public interface WideConsumer<T> {
 		return t -> c.accept(outThrown, t);
 	}
 
+	static <T> Consumer<T> narrow(WideConsumer<T> c) {
+		return c::tryAccept;
+	}
+
 	void accept(T t) throws Throwable;
 
 	default void accept(Throwable[] outThrown, T t) {
@@ -21,6 +25,14 @@ public interface WideConsumer<T> {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
 			}
+		}
+	}
+
+	default void tryAccept(T t) {
+		try {
+			accept(t);
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }

@@ -6,8 +6,8 @@ public interface WideCloseable {
 		return () -> c.close(outThrown);
 	}
 
-	static NarrowCloseable narrow(Throwable[] outThrown, AutoCloseable c, int i) {
-		return narrow(outThrown, c::close);
+	static NarrowCloseable narrow(WideCloseable c) {
+		return c::tryClose;
 	}
 
 	void close() throws Throwable;
@@ -19,6 +19,14 @@ public interface WideCloseable {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
 			}
+		}
+	}
+
+	default void tryClose() {
+		try {
+			close();
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }

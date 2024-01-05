@@ -24,4 +24,12 @@ public interface WideFunction<T, R> {
 			return null;
 		}
 	}
+
+	default R tryApply(T t) {
+		try {
+			return apply(t);
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
+		}
+	}
 }

@@ -12,6 +12,10 @@ public interface WideSupplier<T> {
 		return () -> sup.get(outThrown);
 	}
 
+	static <T> Supplier<T> narrow(WideSupplier<T> sup) {
+		return sup::tryGet;
+	}
+
 	static<T> T getNothing() {
 		return null;
 	}
@@ -26,6 +30,14 @@ public interface WideSupplier<T> {
 				outThrown[0] = thrown;
 			}
 			return null;
+		}
+	}
+
+	default T tryGet() {
+		try {
+			return get();
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }

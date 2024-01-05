@@ -2,8 +2,12 @@ package zltutils.fn;
 
 @FunctionalInterface
 public interface WideRunnable {
-	static <T> Runnable narrow(Throwable[] outThrown, WideRunnable r) {
+	static Runnable narrow(Throwable[] outThrown, WideRunnable r) {
 		return () -> r.run(outThrown);
+	}
+
+	static Runnable narrow(WideRunnable r) {
+		return r::tryRun;
 	}
 
 	static void doNothing() {
@@ -18,6 +22,14 @@ public interface WideRunnable {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
 			}
+		}
+	}
+
+	default void tryRun() {
+		try {
+			run();
+		} catch (Throwable thrown) {
+			throw new RuntimeException(thrown);
 		}
 	}
 }
