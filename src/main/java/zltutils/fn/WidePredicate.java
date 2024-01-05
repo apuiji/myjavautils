@@ -4,9 +4,19 @@ import java.util.function.Predicate;
 
 @FunctionalInterface
 public interface WidePredicate<T> {
-	static <T> boolean test(Throwable[] outThrown, WidePredicate<T> p, T t) {
+	static <T> WidePredicate<T> from(WidePredicate<T> p) {
+		return p;
+	}
+
+	static <T> Predicate<T> narrow(Throwable[] outThrown, WidePredicate<T> p) {
+		return t -> p.test(outThrown, t);
+	}
+
+	boolean test(T t) throws Throwable;
+
+	default boolean test(Throwable[] outThrown, T t) {
 		try {
-			return p.test(t);
+			return test(t);
 		} catch (Throwable thrown) {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
@@ -14,10 +24,4 @@ public interface WidePredicate<T> {
 			return false;
 		}
 	}
-
-	static <T> Predicate<T> narrow(Throwable[] outThrown, WidePredicate<T> p) {
-		return t -> test(outThrown, p, t);
-	}
-
-	boolean test(T t) throws Throwable;
 }

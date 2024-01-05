@@ -21,7 +21,7 @@ public class ReflectMethodUtils {
 	 * @param getMethod example {@code getMethod(clazz::getDeclaredMethod, "methodName", int.class)}
 	 */
 	public static Method getMethod(WideBiFunction<String, Class<?>[], Method> getMethod, String name, Class<?>... paramTypes) {
-		return WideBiFunction.apply(null, getMethod, name, paramTypes);
+		return getMethod.apply(null, name, paramTypes);
 	}
 
 	public static Method getMethod(

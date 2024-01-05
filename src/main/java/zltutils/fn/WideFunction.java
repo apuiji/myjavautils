@@ -4,9 +4,19 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface WideFunction<T, R> {
-	static <T, R> R apply(Throwable[] outThrown, WideFunction<T, R> f, T t) {
+	static <T, R> WideFunction<T, R> from(WideFunction<T, R> f) {
+		return f;
+	}
+
+	static <T, R> Function<T, R> narrow(Throwable[] outThrown, WideFunction<T, R> f) {
+		return t -> f.apply(outThrown, t);
+	}
+
+	R apply(T t) throws Throwable;
+
+	default R apply(Throwable[] outThrown, T t) {
 		try {
-			return f.apply(t);
+			return apply(t);
 		} catch (Throwable thrown) {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
@@ -14,10 +24,4 @@ public interface WideFunction<T, R> {
 			return null;
 		}
 	}
-
-	static <T, R> Function<T, R> narrow(Throwable[] outThrown, WideFunction<T, R> f) {
-		return t -> apply(outThrown, f, t);
-	}
-
-	R apply(T t) throws Throwable;
 }

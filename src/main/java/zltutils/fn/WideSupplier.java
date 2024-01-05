@@ -4,9 +4,23 @@ import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface WideSupplier<T> {
-	static <T> T get(Throwable[] outThrown, WideSupplier<T> sup) {
+	static <T> WideSupplier<T> from(WideSupplier<T> sup) {
+		return sup;
+	}
+
+	static <T> Supplier<T> narrow(Throwable[] outThrown, WideSupplier<T> sup) {
+		return () -> sup.get(outThrown);
+	}
+
+	static<T> T getNothing() {
+		return null;
+	}
+
+	T get() throws Throwable;
+
+	default T get(Throwable[] outThrown) {
 		try {
-			return sup.get();
+			return get();
 		} catch (Throwable thrown) {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
@@ -14,10 +28,4 @@ public interface WideSupplier<T> {
 			return null;
 		}
 	}
-
-	static <T> Supplier<T> narrow(Throwable[] outThrown, WideSupplier<T> sup) {
-		return () -> get(outThrown, sup);
-	}
-
-	T get() throws Throwable;
 }

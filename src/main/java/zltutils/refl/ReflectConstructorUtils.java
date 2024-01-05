@@ -21,7 +21,7 @@ public class ReflectConstructorUtils {
 	 * @param getCons example {@code getConstructor(clazz::getDeclaredConstructor, int.class)}
 	 */
 	public static <T> Constructor<T> getConstructor(WideFunction<Class<?>[], Constructor<T>> getCons, Class<?>... paramTypes) {
-		return WideFunction.apply(null, getCons, paramTypes);
+		return getCons.apply(null, paramTypes);
 	}
 
 	public static <T> Constructor<T> getConstructor(

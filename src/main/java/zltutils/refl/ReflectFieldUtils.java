@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 public class ReflectFieldUtils {
 	public static Field getField(Class<?> clazz, String name) {
-		return WideFunction.apply(null, clazz::getField, name);
+		return WideFunction.from(clazz::getField).apply(null, name);
 	}
 
 	public static Field getDeclaredField(Class<?> clazz, String name) {
-		return WideFunction.apply(null, clazz::getDeclaredField, name);
+		return WideFunction.from(clazz::getDeclaredField).apply(null, name);
 	}
 
 	private static Set<Field> findFields(Supplier<Field[]> getFields, Predicate<Field> filter) {

@@ -4,19 +4,23 @@ import java.util.function.Consumer;
 
 @FunctionalInterface
 public interface WideConsumer<T> {
-	static <T> void accept(Throwable[] outThrown, WideConsumer<T> c, T t) {
+	static <T> WideConsumer<T> from(WideConsumer<T> c) {
+		return c;
+	}
+
+	static <T> Consumer<T> narrow(Throwable[] outThrown, WideConsumer<T> c) {
+		return t -> c.accept(outThrown, t);
+	}
+
+	void accept(T t) throws Throwable;
+
+	default void accept(Throwable[] outThrown, T t) {
 		try {
-			c.accept(t);
+			accept(t);
 		} catch (Throwable thrown) {
 			if (outThrown != null) {
 				outThrown[0] = thrown;
 			}
 		}
 	}
-
-	static <T> Consumer<T> narrow(Throwable[] outThrown, WideConsumer<T> c) {
-		return t -> accept(outThrown, c, t);
-	}
-
-	void accept(T t) throws Throwable;
 }
