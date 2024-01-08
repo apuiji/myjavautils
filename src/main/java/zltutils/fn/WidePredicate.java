@@ -32,6 +32,8 @@ public interface WidePredicate<T> {
 	default boolean tryTest(T t) {
 		try {
 			return test(t);
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

@@ -36,6 +36,8 @@ public interface WideSupplier<T> {
 	default T tryGet() {
 		try {
 			return get();
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

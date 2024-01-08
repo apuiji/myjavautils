@@ -32,6 +32,8 @@ public interface WideBiFunction<T, U, R> {
 	default R tryApply(T t, U u) {
 		try {
 			return apply(t, u);
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

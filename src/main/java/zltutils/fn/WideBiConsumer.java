@@ -31,6 +31,8 @@ public interface WideBiConsumer<T, U> {
 	default void tryAccept(T t, U u) {
 		try {
 			accept(t, u);
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

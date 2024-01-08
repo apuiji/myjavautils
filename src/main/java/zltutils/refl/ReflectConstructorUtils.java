@@ -8,17 +8,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReflectConstructorUtils {
 	/**
-	 * shut up the {@link NoSuchMethodException}
+	 * shut up the NoSuchMethodException
 	 *
-	 * @param getCons example {@code getConstructor(clazz::getDeclaredConstructor, int.class)}
+	 * @param getCons lambda clazz::getConstructor, clazz::getDeclaredConstructor
 	 */
 	public static <T> Constructor<T> getConstructor(WideFunction<Class<?>[], Constructor<T>> getCons, Class<?>... paramTypes) {
 		return getCons.apply(null, paramTypes);
@@ -40,17 +38,18 @@ public class ReflectConstructorUtils {
 	}
 
 	/**
-	 * shut up the {@link NoSuchMethodException}
+	 * shut up the NoSuchMethodException
 	 *
-	 * @param getConstructors example {@code findConstructors(clazz::getDeclaredConstructors, () -> true)}
+	 * @param getConstructors lambda clazz::getConstructors, clazz::getDeclaredConstructors
 	 */
-	public static <T> Set<Constructor<T>> findConstructors(
-			Supplier<Constructor<T>[]> getConstructors, Predicate<Constructor<T>> predicate) {
-		return Arrays.stream(getConstructors.get()).filter(predicate).collect(Collectors.toSet());
+	public static <T> void findConstructors(
+			Collection<Constructor<T>> dest, Supplier<Constructor<T>[]> getConstructors, Predicate<Constructor<T>> predicate) {
+		Arrays.stream(getConstructors.get()).filter(predicate).forEach(dest::add);
 	}
 
-	public static <T> Set<Constructor<T>> findConstructors(Supplier<Constructor<T>[]> getConstructors, int paramCount) {
-		return findConstructors(getConstructors, c -> c.getParameterCount() == paramCount);
+	public static <T> void findConstructors(
+			Collection<Constructor<T>> dest, Supplier<Constructor<T>[]> getConstructors, int paramCount) {
+		findConstructors(dest, getConstructors, c -> c.getParameterCount() == paramCount);
 	}
 
 	public static <T> T neo(Throwable[] outThrown, Constructor<T> cons, Object[] args) {
@@ -61,7 +60,7 @@ public class ReflectConstructorUtils {
 				outThrown[0] = e.getTargetException();
 			}
 			return null;
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (Exception e) {
 			if (outThrown != null) {
 				outThrown[0] = e;
 			}
@@ -76,11 +75,33 @@ public class ReflectConstructorUtils {
 		return neo(outThrown, cons, args);
 	}
 
-	public static <T> T neo(Throwable[] outThrown, Constructor<T> cons, Supplier<Object[]> args) {
-		return neo(outThrown, cons, args.get());
-	}
-
 	public static <T> T neo(Throwable[] outThrown, Constructor<T> cons, Iterator<?> argIt) {
 		return neo(outThrown, cons, IterateUtils.asStream(argIt).toArray());
+	}
+
+	public static <T> T tryNeo(Constructor<T> cons, Object[] args) {
+		try {
+			return cons.newInstance(args);
+		} catch (InvocationTargetException e) {
+			Throwable t = e.getTargetException();
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException) t;
+			} else {
+				throw new RuntimeException(e);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @param i unused, just prevent conflicted method definition
+	 */
+	public static <T> T tryNeo(Constructor<T> cons, int i, Object... args) {
+		return tryNeo(cons, args);
+	}
+
+	public static <T> T tryNeo(Constructor<T> cons, Iterator<?> argIt) {
+		return tryNeo(cons, IterateUtils.asStream(argIt).toArray());
 	}
 }

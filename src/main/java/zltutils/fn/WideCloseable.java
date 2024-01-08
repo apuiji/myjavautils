@@ -25,6 +25,8 @@ public interface WideCloseable {
 	default void tryClose() {
 		try {
 			close();
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

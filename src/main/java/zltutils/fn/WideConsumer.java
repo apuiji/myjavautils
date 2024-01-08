@@ -31,6 +31,8 @@ public interface WideConsumer<T> {
 	default void tryAccept(T t) {
 		try {
 			accept(t);
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

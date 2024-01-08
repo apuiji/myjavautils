@@ -28,6 +28,8 @@ public interface WideFunction<T, R> {
 	default R tryApply(T t) {
 		try {
 			return apply(t);
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

@@ -36,6 +36,8 @@ public interface WideBooleanSupplier {
 	default boolean tryGetAsBoolean() {
 		try {
 			return getAsBoolean();
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

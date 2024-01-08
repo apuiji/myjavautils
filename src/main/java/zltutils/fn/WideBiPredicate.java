@@ -32,6 +32,8 @@ public interface WideBiPredicate<T, U> {
 	default boolean tryTest(T t, U u) {
 		try {
 			return test(t, u);
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}

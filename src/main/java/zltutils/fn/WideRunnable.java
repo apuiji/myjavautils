@@ -28,6 +28,8 @@ public interface WideRunnable {
 	default void tryRun() {
 		try {
 			run();
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Throwable thrown) {
 			throw new RuntimeException(thrown);
 		}
