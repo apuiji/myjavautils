@@ -1,6 +1,7 @@
 package zltutils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Supplier;
 
 /**
@@ -22,29 +23,9 @@ public class NN {
 	}
 
 	/**
-	 * reduce if null check coding before foreach
-	 *
-	 * @return nonnull but unmodified list
+	 * shut up the NullPointerException
 	 */
-	public static <T> List<T> nnList(T[] array) {
-		return array != null ? Arrays.asList(array) : Collections.emptyList();
-	}
-
-	/**
-	 * reduce if null check coding before foreach
-	 *
-	 * @return nonnull but unmodified map
-	 */
-	public static <K, V> Map<K, V> nnMap(Map<K, V> map) {
-		return map != null ? map : Collections.emptyMap();
-	}
-
-	/**
-	 * reduce if null check coding before foreach
-	 *
-	 * @return nonnull but unmodified set
-	 */
-	public static <T> Set<T> nnSet(Set<T> set) {
-		return set != null ? set : Collections.emptySet();
+	public static <T> Iterable<T> nnIterable(T[] array) {
+		return array != null ? Arrays.asList(array) : Collections::emptyIterator;
 	}
 }
