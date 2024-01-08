@@ -2,6 +2,7 @@ package zltutils;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -25,7 +26,7 @@ public class NN {
 	/**
 	 * shut up the NullPointerException
 	 */
-	public static <T> Iterable<T> nnIterable(T[] array) {
-		return array != null ? Arrays.asList(array) : Collections::emptyIterator;
+	public static <T> List<T> nnList(T[] array) {
+		return array != null ? Arrays.asList(array) : Collections.emptyList();
 	}
 }
