@@ -1,8 +1,6 @@
 package zltutils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -28,5 +26,26 @@ public class NN {
 	 */
 	public static <T> List<T> nnList(T[] array) {
 		return array != null ? Arrays.asList(array) : Collections.emptyList();
+	}
+
+	/**
+	 * shut up the NullPointerException and explicit cast coding requirement
+	 */
+	public static <T> List<T> nnList(List<T> ls) {
+		return nng(ls, Collections::emptyList);
+	}
+
+	/**
+	 * shut up the NullPointerException and explicit cast coding requirement
+	 */
+	public static <K, V> Map<K, V> nnMap(Map<K, V> m) {
+		return nng(m, Collections::emptyMap);
+	}
+
+	/**
+	 * shut up the NullPointerException and explicit cast coding requirement
+	 */
+	public static <T> Set<T> nnSet(Set<T> s) {
+		return nng(s, Collections::emptySet);
 	}
 }
